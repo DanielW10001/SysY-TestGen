@@ -1,0 +1,164 @@
+CompUnit:
+  - Decl FuncDef MainFuncDef
+  - MainFuncDef
+
+Decl:
+  - ConstDecl
+  - VarDecl
+
+ConstDecl:
+  - const int ConstDef;
+  - const int ConstDef, ConstDef, ConstDef;
+
+ConstDef:
+  - Ident=ConstInitVal
+  - Ident[ConstExp]=ConstInitVal
+  - Ident[ConstExp][ConstExp]=ConstInitVal
+
+ConstInitVal:
+  - ConstExp
+  - \{ConstExp, ConstExp\}
+  - \{\{ConstExp, ConstExp\}, \{ConstExp, ConstExp\}\}
+
+VarDecl:
+  - int VarDef;
+  - int VarDef, VarDef, VarDef;
+
+VarDef:
+  - Ident
+  - Ident[ConstExp]
+  - Ident[ConstExp][ConstExp]
+  - Ident=InitVal
+  - Ident[ConstExp]=InitVal
+  - Ident[ConstExp][ConstExp]=InitVal
+
+InitVal:
+  - Exp
+  - \{Exp, Exp\}
+  - \{\{Exp, Exp\}, \{Exp, Exp\}\}
+
+FuncDef:
+  - FuncType Ident() Block
+  - FuncType Ident(FuncFParams) Block
+
+MainFuncDef:
+  - int main() Block
+
+FuncType:
+  - void
+  - int
+
+FuncFParams:
+  - FuncFParam
+  - FuncFParam, FuncFParam, FuncFParam
+
+FuncFParam:
+  - int Ident
+  - int Ident[]
+  - int Ident[][ConstExp]
+
+Block:
+  - \{\}
+  - \{BlockItem BlockItem\}
+
+BlockItem:
+  - Decl
+  - Stmt
+
+Stmt:
+  - LVal=Exp;
+  - ;
+  - Exp;
+  - Block
+  - if(Cond) Stmt
+  - if(Cond) Stmt else Stmt
+  - while(Cond) Stmt
+  - break;
+  - continue;
+  - return;
+  - return Exp;
+  - LVal=getint();
+  - printf(FormatString);
+  - printf(FormatString, Exp);
+
+Exp:
+  - AddExp
+
+Cond:
+  - LOrExp
+
+LVal:
+  - Ident
+  - Ident[Exp]
+  - Ident[Exp][Exp]
+
+PrimaryExp:
+  - (Exp)
+  - LVal
+  - Number
+
+Number:
+  - IntConst
+
+UnaryExp:
+  - PrimaryExp
+  - Ident()
+  - Ident(FuncRParams)
+  - UnaryOp UnaryExp
+
+UnaryOp:
+  - "+"
+  - "-"
+  - "!"
+
+FuncRParams:
+  - Exp
+  - Exp, Exp, Exp
+  - Ident[Exp]
+  - Ident[Exp]  # 部分数组传参
+
+MulExp:
+  - UnaryExp
+  - MulExp*UnaryExp
+  - MulExp/UnaryExp
+  - MulExp%UnaryExp
+
+AddExp:
+  - MulExp
+  - AddExp+MulExp
+  - AddExp-MulExp
+
+RelExp:
+  - AddExp
+  - RelExp<AddExp
+  - RelExp>AddExp
+  - RelExp<=AddExp
+  - RelExp>=AddExp
+
+EqExp:
+  - RelExp
+  - EqExp==RelExp
+  - EqExp!=RelExp
+
+LAndExp:
+  - EqExp
+  - LAndExp&&EqExp
+
+LOrExp:
+  - LAndExp
+  - LOrExp||LAndExp
+
+ConstExp:
+  - AddExp
+
+Ident:
+  - ident
+
+IntConst:
+  - "0"
+  - "1"
+  - "-1"
+
+FormatString:
+  - "\"output\\n\""
+  - "\"output: %d\\n\""
